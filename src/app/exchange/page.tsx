@@ -5,20 +5,20 @@ import CheckboxValidate from './components/CheckboxValidate';
 const prisma = new PrismaClient();
 
 const getStock = async () => {
-    const dateNow = new Date();
-    const getLatestExchange = await prisma.exchange.findFirst({
-        orderBy: {
-            createdAt: "desc"
-        }
-    });
+    // const dateNow = new Date();
+    // const getLatestExchange = await prisma.exchange.findFirst({
+    //     orderBy: {
+    //         createdAt: "desc"
+    //     }
+    // });
 
-    if (getLatestExchange && getLatestExchange.createdAt.getDate() !== dateNow.getDate()) {
-        await prisma.stock.updateMany({
-            data: {
-                quantity: 2000
-            }
-        });
-    }
+    // if (getLatestExchange && getLatestExchange.createdAt.getDate() !== dateNow.getDate()) {
+    //     await prisma.stock.updateMany({
+    //         data: {
+    //             quantity: 2000
+    //         }
+    //     });
+    // }
     const res = await prisma.stock.findMany({
         orderBy: {
             number: 'asc'
