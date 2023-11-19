@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Stock {
+  id        String   @id @default(uuid())
+  number    Int
+  fraction  Int
+  quantity  Int
+  type      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Exchange {
+  id            String   @id @default(uuid())
+  name          String
+  queue         Int      
+  accountNumber String
+  purpose       String
+  phoneNumber   String
+  datePickUp    DateTime @db.Date()
+  timePickUp    String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  totalExchange totalExchange[]
+}
+
+model totalExchange {
+  id         String    @id @default(uuid())
+  total      Int
+  fraction   Int
+  type       String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  exchange   Exchange? @relation(fields: [exchangeId], references: [id])
+  exchangeId String?
+}
