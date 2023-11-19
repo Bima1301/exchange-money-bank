@@ -1,6 +1,6 @@
 
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs';
 import { DatePicker, Input, Select, TimePicker } from 'antd';
 import toast from 'react-hot-toast';
@@ -102,7 +102,9 @@ export default function Home() {
     };
 
 
-    const createExchangeAction = async () => {
+    const handleSubmitForm = async (e: SyntheticEvent) => {
+        e.preventDefault();
+        toast.loading("Mengirim data...");
         setIsLoading(true);
         // VALIDATE TOTAL EXCHANGE
         if (data.totalExchange[0]?.fraction === '' || data.totalExchange[0]?.total === '') {
@@ -115,6 +117,7 @@ export default function Home() {
             })
             toast.error("Terdapat kesalahan pada jumlah penukaran");
             setIsLoading(false);
+            toast.dismiss();
             return
         }
         if (data.totalExchange.length > 1) {
@@ -129,26 +132,15 @@ export default function Home() {
                 });
                 toast.error("Terdapat kesalahan pada jumlah penukaran");
                 setIsLoading(false);
+                toast.dismiss();
                 return
             }
         };
         // END VALIDATE TOTAL EXCHANGE
 
-        const response = await createExchange(
-            data,
-        );
-        if (response.status === "error") {
-            setIsLoading(false);
-            if (response.type === "validation") {
-                setErrors(response.errors);
-                return;
-            } else {
-                toast.error(response.message);
-                return;
-            }
-        }
-        if (response.status === "success") {
-            localStorage.setItem("exchange_id", response?.data?.id || '');
+        await axios.post('/api/exchange', data).then((res) => {
+            localStorage.setItem("exchange_id", res?.data?.data?.id || '');
+            toast.dismiss();
             setIsLoading(false);
             formRef.current?.reset();
             setData({
@@ -166,19 +158,64 @@ export default function Home() {
                 datePickUp: '',
                 timePickUp: ''
             })
-            toast.success(response.message);
-            toast.loading("Mengalihkan ke halaman antrian...");
-            router.push(`/queue/${response?.data?.id}`);
+            toast.success(res.data.message);
+            router.push(`/queue/${res?.data.data?.id}`);
             setErrors(null);
-        }
+        }).catch((err) => {
+            console.log(err);
+            toast.dismiss();
+            toast.error("Terjadi kesalahan");
+            setIsLoading(false);
+            if (err.response.data.type === "validation") {
+                setErrors(err.response.data.errors);
+                return;
+            } else {
+                toast.error(err.response.data.message);
+                return;
+            }
+        })
+        // if (response.status === "error") {
+        //     setIsLoading(false);
+        //     if (response.type === "validation") {
+        //         setErrors(response.errors);
+        //         return;
+        //     } else {
+        //         toast.error(response.message);
+        //         return;
+        //     }
+        // }
+        // if (response.status === "success") {
+        //     localStorage.setItem("exchange_id", response?.data?.id || '');
+        //     setIsLoading(false);
+        //     formRef.current?.reset();
+        //     setData({
+        //         name: '',
+        //         accountNumber: '',
+        //         purpose: '',
+        //         phoneNumber: '',
+        //         totalExchange: [
+        //             {
+        //                 fraction: '',
+        //                 total: '',
+        //                 type: ''
+        //             }
+        //         ],
+        //         datePickUp: '',
+        //         timePickUp: ''
+        //     })
+        //     toast.success(response.message);
+        //     toast.loading("Mengalihkan ke halaman antrian...");
+        //     router.push(`/queue/${response?.data?.id}`);
+        //     setErrors(null);
+        // }
     };
     return (
         <Layout isTopLogo className='h-full relative overflow-hidden'>
             <div className="w-full h-full relative flex flex-col justify-center items-center lg:px-0 px-5 md:pt-28 pt-20 overflow-hidden z-30">
                 <p className="text-zinc-800 lg:text-4xl md:text-2xl text-xl font-semibold text-center mb-10">PECAHAN UANG YANG TERSEDIA</p>
                 {options.length > 0 ? (
-                    <form ref={formRef}
-                        action={createExchangeAction} className='w-full max-w-3xl flex flex-col gap-3'>
+                    <form ref={formRef} onSubmit={handleSubmitForm}
+                        className='w-full max-w-3xl flex flex-col gap-3'>
                         <InputLabel
                             label='Nama Nasabah'
                             type='text'

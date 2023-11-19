@@ -2,6 +2,7 @@
 import Layout from '@/components/molecules/Layout'
 import QueueData from '@/components/molecules/QueueData'
 import { PrismaClient } from '@prisma/client'
+import toast from 'react-hot-toast';
 const prisma = new PrismaClient();
 
 const getExchange = async (id: string) => {
