@@ -4,7 +4,6 @@ import React, { SyntheticEvent, useEffect, useRef, useState } from 'react'
 import dayjs from 'dayjs';
 import { DatePicker, Input, Select, TimePicker } from 'antd';
 import toast from 'react-hot-toast';
-import createExchange from '@/actions/createExchange';
 import { validateTotalExchange } from '@/libs/utils';
 import { useRouter } from 'next/navigation';
 import InputLabel from '@/components/atoms/InputLabel';
@@ -160,6 +159,7 @@ export default function Home() {
             })
             toast.success(res.data.message);
             router.push(`/queue/${res?.data.data?.id}`);
+            toast.loading("Mengalihkan ke halaman antrian...");
             setErrors(null);
         }).catch((err) => {
             console.log(err);

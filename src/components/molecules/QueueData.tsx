@@ -1,11 +1,12 @@
 'use client'
-import { getURL } from "@/libs/utils";
 import { QRCode } from "antd";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 export default function QueueData({ data }: any) {
     const [currentUrl, setCurrentUrl] = useState('');
     useEffect(() => {
+        toast.dismiss();
         setCurrentUrl(window.location.href);
     }, [data])
     return (

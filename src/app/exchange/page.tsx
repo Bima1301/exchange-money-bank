@@ -1,9 +1,4 @@
-
-import Button from '@/components/atoms/Button';
-import Checkbox from '@/components/atoms/Checkbox'
 import Layout from '@/components/molecules/Layout'
-import Link from 'next/link';
-import React, { useState } from 'react'
 import { PrismaClient } from "@prisma/client";
 import CheckboxValidate from './components/CheckboxValidate';
 
