@@ -1,6 +1,13 @@
+'use client'
+import { getURL } from "@/libs/utils";
 import { QRCode } from "antd";
+import { use, useEffect, useState } from "react";
 
 export default function QueueData({ data }: any) {
+    const [currentUrl, setCurrentUrl] = useState('');
+    useEffect(() => {
+        setCurrentUrl(window.location.href);
+    }, [data])
     return (
         <div className='w-full max-w-3xl flex flex-col md:gap-12 gap-8 justify-center items-center'>
             <p className="lg:text-4xl md:text-2xl text-xl font-semibold text-center uppercase">Anda mendapat nomor antrian</p>
@@ -11,7 +18,7 @@ export default function QueueData({ data }: any) {
                         data?.queue?.toString().length === 2 ? `0${data?.queue}` : data?.queue
                 }</p>
                 <div className='bg-white md:p-5 p-3'>
-                    <QRCode value={`${process.env.NEXT_PUBLIC_URL}queue/${data.id}`} />
+                    <QRCode value={currentUrl} />
                 </div>
             </div>
 
